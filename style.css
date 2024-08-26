@@ -1,0 +1,184 @@
+body {
+      font-family: Iosevka;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 0;
+      background-color: #202123;
+      color: white;
+      font-size: 16px;
+/*      height:100%;*/
+
+      overflow-y:scroll;
+}
+
+
+body::-webkit-scrollbar {
+    width: 0.2em;
+}
+
+body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+    /*fix this later, it probably should not be transparent...*/
+    background-color: white;
+    border-radius: 10px;
+}
+
+/*.container {
+    display:flex;
+    flex-direction: column;
+    min-height:100vh;
+}
+
+.content{
+    flex: 1;
+}*/
+
+.bottomBar {
+    position:fixed;
+    display:flex;
+    gap: 8px;
+    background:#161515;
+    width:100%;
+    justify-content: space-between;
+    align-items:center;
+    bottom:0px;
+    height:75px;
+
+}
+
+/*keeps the song info and pic next to each other*/
+.currentlyPlayingContainer{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.controls {
+    justify-content:center;
+    padding:10px;
+}
+
+button {
+    font-family: Iosevka;
+    background-color: #222021;
+    border-radius:7px;
+    border-color: #ff585b;
+    border-width: 2px;
+    font-weight: bold;
+    border-style: solid;
+    font-size: 16px;
+    padding:5px;
+    color:white;
+}
+
+.hidden {
+    display: none;
+}
+
+.cover_image_smol{
+    height:75px;
+}
+
+.cover_image_big{
+    height: 250px;
+    position:fixed;
+    bottom:75px;
+    right:0px;
+    border: 6px solid #161515;
+    border-top-left-radius:10px;
+    border-top-right-radius:10px;
+}
+
+
+.timer{
+    padding:5px;
+}
+
+
+input[type=range] {
+    padding:5px;
+    -webkit-appearance: none;
+    background:none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  animate: 0.05s;
+  background: #47484d;
+  border-radius: 20px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 15px;
+  background: #ff585b;
+  border: solid;
+  border-color: white;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7px;
+}
+
+
+
+
+#volume_slider{
+    bottom:50px;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    vertical-align: middle;
+    width:6px;
+    position:fixed;
+    border: 10px solid #161515;
+    background-color: #161515;
+    border-radius:10px;
+}
+
+
+
+
+/* input[type=range]::-ms-fill-lower {
+  background: white;
+}
+input[type=range]::-ms-fill-upper {
+  background: ;
+}*/
+
+#song_name{
+    font-weight: bold;
+}
+
+.songNameAndTitle{
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+}
+
+
+.song_infobox{
+    display:flex;
+    justify-content: space-between;
+    gap:25px;
+    border-bottom: 2px solid #3c3d41;
+    padding:10px;
+}
+
+span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow:ellipsis;
+}
+
+#song_list_info {
+    font-weight:bold;
+    font-size:20px;
+}
+
+
