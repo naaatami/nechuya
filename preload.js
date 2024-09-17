@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const jsmediatags = require('jsmediatags');
 const fs = require('fs').promises;
+const { getAudioDurationInSeconds } = require('get-audio-duration')
 
 contextBridge.exposeInMainWorld('electronAPI', {
     openFile: () => ipcRenderer.invoke('dialog:openFile'),
@@ -21,3 +22,6 @@ contextBridge.exposeInMainWorld('fsAPI', {
 });
 
 
+contextBridge.exposeInMainWorld('audioAPI', {
+    getAudioDuration: (file) => getAudioDurationInSeconds(file)
+});

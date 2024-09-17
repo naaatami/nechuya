@@ -14,8 +14,11 @@
     <button id="open_folder">Open Folder</button>
     <div id="song_list_info">
         <div class="song_infobox">
-            <span>Title</span>
-            <span>Artist</span>
+            <div class="force_to_left">
+                <span class="duration">Duration</span>
+                <span id="title_sort">Title</span>
+            </div>
+            <span id="artist_sort">Artist</span>
         </div>
     </div>
 
@@ -27,19 +30,20 @@
         <div class="bottomBar">
             <div class="controls">
                 <button id="previous"><-</button>
-                <button id="play">Play</button>
-                <button id="pause" class="hidden">Pause</button>
+                <button id="play">▶</button>
+                <button id="pause" class="hidden">⏸</button>
                 <button id="next">-></button>
                 <span id="current_time" class="timer">0:00</span>
                 <input type="range" min="0" max="100" value="0" id="seeker">
                 <span id="total_time" class="timer">0:00</span>
-                <button href="#" id="volume_up">+</button>
-                <button id="volume_down">-</button>
+                    <button href="#" id="volume_up">+</button>
+<!--                    <button id="volume_down">-</button>-->
                 <input id="volume_slider" class="hidden" type="range" min="0" max="100" value="100">
                 <button id="shuffle">Shuffle</button>
+                <button id="loop">Loop</button>
                 <button id="open_file" class="hidden">Open File</button>
             </div>
-            <div class="currentlyPlayingContainer">
+            <div class="force_to_left">
                 <div class="songNameAndTitle">
                     <span id="song_name" class="song_info"></span>
                     <span><br></span>

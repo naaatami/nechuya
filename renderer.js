@@ -6,8 +6,7 @@ const currentSong = document.getElementById('song_name');
 const currentArtist = document.getElementById('artist_name');
 const openFolder = document.getElementById('open_folder');
 const songList = document.getElementById('song_list');
-
-// might be removable eventually
+const loopButton = document.getElementById('loop');
 const openFileButton = document.getElementById('open_file');
 const playButton = document.getElementById('play');
 const pauseButton = document.getElementById('pause');
@@ -19,16 +18,16 @@ const previousButton = document.getElementById('previous');
 const nextButton = document.getElementById('next');
 const shuffleButton = document.getElementById('shuffle');
 
-
 let currentSongIndex = 0;
 let songFiles = [];
 let shuffleMode = false;
+let loopMode = false;
 let shuffleIndexList = [];
 let folderPath;
 
-//change time
+//change time shown by the seeker
 audio.addEventListener("timeupdate", () => {
-    // this adds a little delay, BUT it makes it so NaN does not show anymore
+    //makes it so NaN does not show anymore
     if(!audio.currentTime)
     {
         return;
@@ -54,7 +53,6 @@ function updateCurrentPlayingInfo(filePath) {
             var image = tag.tags.picture;
             var artist = tag.tags.artist;
             var title = tag.tags.title;
-            // console.log(tag);
 
             if (title) {
                 currentSong.textContent = title;
@@ -92,16 +90,20 @@ function updateCurrentPlayingInfo(filePath) {
     });
 }
 
+// go to next song on audio end
 audio.addEventListener('ended', () => {
     playNextSong();
     seekerBar.value = 0;
 });
 
+// open folder
 openFolder.addEventListener('click', async () => {
     folderPath = await window.electronAPI.openFolder();
     loadFiles(folderPath);
 });
 
+
+// gets the song name to display in library
 function getSongName(file) {
     return new Promise((resolve, reject) => {
         window.jsmediaAPI.readTags(file, {
@@ -120,7 +122,7 @@ function getSongName(file) {
     });
 }
 
-
+// gets the artist name to display in library
 function getArtistName(file) {
     return new Promise((resolve, reject) => {
         window.jsmediaAPI.readTags(file, {
@@ -139,21 +141,20 @@ function getArtistName(file) {
 }
 
 
-//play
+// play button - plays first song if nothing is playing yet
 playButton.addEventListener('click', () => {
-    loadAndPlaySong();
+    if(!audio.src)
+    {
+        loadAndPlaySong();
+    }
+    audio.play();
 });
 
-//defaults to just playing first song :D yippee
+// loads and plays the song at the given index.
+// if there's no index given, just plays the first
 function loadAndPlaySong(index=0){
     currentSongIndex = index;
     const fullPath = `${folderPath}/${songFiles[currentSongIndex]}`;
-    // console.log(index);
-    // console.log(currentSongIndex);
-    // console.log(folderPath);
-    // console.log(songFiles);
-    // console.log(songFiles[currentSongIndex]);
-    // console.log(fullPath);
     audio.src = fullPath;
     audio.play();
     playButton.style.display = 'none';
@@ -161,7 +162,14 @@ function loadAndPlaySong(index=0){
     updateCurrentPlayingInfo(fullPath);
 }
 
+// function that runs on song click - turns shuffle and loop off while it's at it
+function manualSongClick(index=0){
+    toggleShuffle(false);
+    toggleLoop(false);
+    loadAndPlaySong(index)
+}
 
+// loads songs into library
 async function loadFiles(folderPath) {
     songFiles = await window.electronAPI.readDirectory(folderPath);
     console.log(songFiles);
@@ -172,60 +180,42 @@ async function loadFiles(folderPath) {
 
         const songInfoBox = document.createElement('div');
         songInfoBox.className = "song_infobox";
-        songInfoBox.addEventListener('click', () => loadAndPlaySong(index));
+
+        const forceToLeft = document.createElement('div');
+        forceToLeft.className = "force_to_left";
+        songInfoBox.append(forceToLeft);
+
+        songInfoBox.addEventListener('click', () => manualSongClick(index));
+
+
+        const songDurationBox = document.createElement('span');
+        const songDuration = await window.audioAPI.getAudioDuration(fullPath);
+        const songMinutes = Math.floor(songDuration / 60);
+        const songSeconds = Math.floor(songDuration % 60);
+        const formattedSeconds = songSeconds < 10 ? '0' + songSeconds : songSeconds;
+        songDurationBox.className = "duration";
+        songDurationBox.textContent = songMinutes + ":" + formattedSeconds;
+        forceToLeft.append(songDurationBox);
 
         const songName = document.createElement('span');
         songName.textContent = await getSongName(fullPath);
-        songInfoBox.append(songName);
+        forceToLeft.append(songName);
 
         const songArtist = document.createElement('span');
         songArtist.textContent = await getArtistName(fullPath);
         songInfoBox.append(songArtist);
 
-        /*const songDuration = document.createElement('span');
-         *      songDuration.textContent =*/
-
         songList.append(songInfoBox);
     }
-
-    // NOT USING THIS FOR NOW but a vague paralleized idea
-    // const songInfoPromises = songFiles.map(async(song) => {
-    //     const fullPath = `${folderPath}/${song}`;
-    //     const songName = await getSongName(fullPath);
-    //     const songArtist = await getArtistName(fullPath);
-    //     console.log(songArtist);
-    //     console.log(songName);
-    //     return {fullPath, songName, songArtist};
-    // });
-    //
-    // const songInfoDump = await Promise.all(songInfoPromises);
-    //
-    // let index = 0;
-    // songInfoDump.forEach(({fullPath, songName, songArtist}) => {
-    //     // console.log("!!!");
-    //     const songInfoBox = document.createElement('div');
-    //     songInfoBox.className = "song_infobox";
-    //     console.log(index);
-    //     songInfoBox.addEventListener('click', () => loadAndPlaySong(index));
-    //
-    //     const songNameBox = document.createElement('span');
-    //     songNameBox.textContent = songName;
-    //     songInfoBox.append(songName);
-    //
-    //     const songArtistBox = document.createElement('span');
-    //     songArtistBox.textContent = songArtist;
-    //     songInfoBox.append(songArtist);
-    //
-    //     songList.append(songInfoBox);
-    //     index++;
-    //
-    // });
 };
 
+// next button - turns loop off
 nextButton.addEventListener('click', () => {
+    toggleLoop(false);
     playNextSong();
 });
 
+// plyas the next song, shuffling/looping if needed
 function playNextSong(){
     let nextSongIndex;
     let firstSongIndex;
@@ -238,26 +228,47 @@ function playNextSong(){
         firstSongIndex = 0;
     }
 
+    if(loopMode == true) {
+        nextSongIndex = currentSongIndex;
+    }
+
     if (nextSongIndex < songFiles.length) {
         loadAndPlaySong(nextSongIndex);
     } else {
         loadAndPlaySong(firstSongIndex);
-        console.log("loopinggg :3 - sarahunh0ly");
     }
 }
 
+// plays previous song
 previousButton.addEventListener('click', () => {
-    let previousSongIndex = currentSongIndex - 1;
+    let previousSongIndex;
+    if(shuffleMode == true)
+    {
+        previousSongIndex = shuffleIndexList[currentSongIndex - 1];
+    } else {
+        previousSongIndex = currentSongIndex - 1;
+    }
+
     if (previousSongIndex >= 0) {
         loadAndPlaySong(previousSongIndex);
     }
 });
 
 
-// this doES NOT WORK AND IS HORRIBLY MADE
-// WELL THIS FUNCTION DOES WORK BUT IF YOU LOOK AT HOW IT'S INTEGRATED INTO THE PROGRAM, NO THE FUCK IT IS NOT
+// button to toggle shuffling
 shuffleButton.addEventListener('click', () => {
-    shuffleMode = !shuffleMode;
+    toggleShuffle();
+});
+
+// toggles shuffle
+//enter "true" into the function to turn shuffle off, otherwise it just defaults to swapping shuffling
+function toggleShuffle(toggleAsNormal=true) {
+    if(toggleAsNormal)
+    {
+        shuffleMode = !shuffleMode;
+    } else {
+        shuffleMode = false;
+    }
 
     if(shuffleMode) {
         shuffleButton.textContent = 'Unshuffle';
@@ -272,32 +283,44 @@ shuffleButton.addEventListener('click', () => {
         while(currentIndex != 0) {
             let randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
-
             [shuffleIndexList[currentIndex], shuffleIndexList[randomIndex]] = [shuffleIndexList[randomIndex], shuffleIndexList[currentIndex]];
         }
     } else {
         shuffleButton.textContent = 'Shuffle';
     }
+}
 
+// toggles looping
+function toggleLoop(toggleAsNormal=true){
+    if(toggleAsNormal)
+    {
+        loopMode = !loopMode;
+    } else {
+        loopMode = false;
+    }
 
+    if(loopMode) {
+        loopButton.textContent = 'Unloop';
+    } else {
+        loopButton.textContent = 'Loop';
+    }
+}
+
+// button to toggle looping
+loopButton.addEventListener('click', () => {
+    toggleLoop();
 });
 
+// expands cover image on click
 coverImage.addEventListener('click', () => {
-   if(coverImage.classList.contains('cover_image_smol')) {
-       coverImage.classList.add('cover_image_big');
-       coverImage.classList.remove('cover_image_smol');
-   } else {
-       coverImage.classList.add('cover_image_smol');
-       coverImage.classList.remove('cover_image_big');
-   }
+    coverImage.classList.toggle('cover_image_smol');
+    coverImage.classList.toggle('cover_image_big');
 });
 
 
 
 //runs on start, remove eventually
-// audio.src = '/home/cyuu/pleasework/music/soundcloudthievery/YARIMOV x Lieless - della bestia.mp3';
-// updateCurrentPlayingInfo(file);
-const file = '/home/nat/pleasework/music/soundcloudthievery/YARIMOV x Lieless - della bestia.mp3';
+// folderPath = CONFIG.defaultFolder;
 folderPath = "/home/nat/pleasework/music/soundcloudthievery";
 loadFiles(folderPath);
 

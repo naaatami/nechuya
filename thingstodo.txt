@@ -1,20 +1,17 @@
 SIGNIFCANT FEATURES
-- playlists... ugh. this is a much later problem, I suspect
-- the ability to sort upon clicking title/artist
-- loop button
-- make a volume slider that opens on click
-- search for a song
-- enable copying
+- the ability to sort upon clicking title/artist - will probably require ripping everything apart because it's done super weird right now
+- searching for songs
 - find a way to set a default open folder the right way. if nothing is there, display a message on start up
+- playlists... will likely be easier to add if the first bullet point is addressed
 
 UI FEATURES/TOUCH UPS
-- add the song duration to the side of the title
-- change px into a better unit at some point
 - make the buttons into fixed size symbols
 - find a way to maybe nicely condense the bottom playbar when in half screen mode
-- fix the 40 thousand shades of gray
+- bottom bar covers elements at bottom - fix it
+- make the volume slider work just a bit better
 
 BUG FIXES
 - if you open another folder while one is loading, both will load at once
-- if you hold the thumb at the end of the progress bar, it just skips like crazy... maybe fix that xdd
-- there is a bug where the slider jumps to the middle when changing songs
+- if you hold the thumb at the end of the progress bar, it just skips like crazy... maybe fix that
+- slider jumps to the middle when changing songs
+- going backwards does not work right in shuffle mode - takes you to another totally random song. something is probably wrong with shuffling

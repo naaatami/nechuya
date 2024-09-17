@@ -13,7 +13,7 @@
     "electron": "^31.4.0"
   },
   "dependencies": {
-    "browser-id3-writer": "^6.1.0",
+    "get-audio-duration": "^4.0.1",
     "jsmediatags": "^3.9.7"
   }
 }
