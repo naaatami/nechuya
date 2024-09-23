@@ -10,6 +10,7 @@ This was made primarily so I could learn how to use JavaScript.
 - Song shuffling
 - Looping songs
 - A song selection UI with the duration, title, and artist of the song
+
 If you'd like to see the cover art a bit better, you can click it on the bottom right and it'll be expanded some.
 
 ### How to use it
