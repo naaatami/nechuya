@@ -1,20 +1,13 @@
-const openFileButton = document.getElementById('open_file');
-const playButton = document.getElementById('play');
-const pauseButton = document.getElementById('pause');
-const stopButton = document.getElementById('stop');
-const volumeUpButton = document.getElementById('volume_up');
-const volumeDownButton = document.getElementById('volume_down');
-const seekerBar = document.getElementById('seeker');
-const volumeSlider = document.getElementById('volume_slider');
+import * as elements from './elements.js';
 
 //open file
-openFileButton.addEventListener('click', async () => {
+elements.openFileButton.addEventListener('click', async () => {
   const filePath = await window.electronAPI.openFile();
 
   if (filePath) {
 
-    audio.src = filePath;
-    audio.play();
+    elements.audio.src = filePath;
+    elements.audio.play();
 
     try {
         const fileBuffer = await window.fsAPI.readFile(filePath);
@@ -26,58 +19,62 @@ openFileButton.addEventListener('click', async () => {
   }
 });
 
-
 //pauses audio
-pauseButton.addEventListener('click', () => {
-    audio.pause();
-    pauseButton.style.display = 'none';
-    playButton.style.display = 'inline';
+elements.pauseButton.addEventListener('click', () => {
+    elements.audio.pause();
+    elements.pauseButton.style.display = 'none';
+    elements.playButton.style.display = 'inline';
 });
 
 // shows volume options on mouseover
-volumeUpButton.addEventListener("mouseover", (event) => {
+elements.volumeUpButton.addEventListener("mouseover", (event) => {
     volumeSlider.classList.toggle("hidden");
     var leftPosition = volumeUpButton.offsetLeft -2;
     var topPosition = volumeUpButton.offsetTop;
-    console.log(topPosition);
-    volumeSlider.style.position = 'absolute';
-    volumeSlider.style.top = '-115px';
-    volumeSlider.style.left = leftPosition + "px";
+    elements.volumeSlider.style.position = 'absolute';
+    elements.volumeSlider.style.top = '-115px';
+    elements.volumeSlider.style.left = leftPosition + "px";
 });
 
 // shows volume options on mouseover
-volumeSlider.addEventListener("mouseover", (event) => {
-    volumeSlider.classList.remove("hidden");
+elements.volumeSlider.addEventListener("mouseover", (event) => {
+    elements.volumeSlider.classList.remove("hidden");
 });
 
 // closes volume options on mouse exit
-volumeSlider.addEventListener("mouseout", (event) => {
-    volumeSlider.classList.add("hidden");
+elements.volumeSlider.addEventListener("mouseout", (event) => {
+    elements.volumeSlider.classList.add("hidden");
 });
 
 // closes volume options on mouse exit
-volumeUpButton.addEventListener("mouseout", (event) => {
-    volumeSlider.classList.toggle("hidden");
+elements.volumeUpButton.addEventListener("mouseout", (event) => {
+    elements.volumeSlider.classList.toggle("hidden");
 });
 
 
 //seeker
 //https://stackoverflow.com/questions/71195367/update-position-of-seeker-i-e-html-input-type-range-while-an-audio-is-playing
-audio.addEventListener("timeupdate", () => {
-    if(!audio.duration)
+elements.audio.addEventListener("timeupdate", () => {
+    if(!elements.audio.duration)
     {
-        seekerBar.value = 0;
+        elements.seekerBar.value = 0;
     }
     const songProgressPercent = audio.currentTime / audio.duration * 100;
-    seekerBar.value = songProgressPercent;
+    elements.seekerBar.value = songProgressPercent;
 });
 
 //change time in song as we jump around the seeker
-seekerBar.addEventListener('input', (newCurrentTime) => {
-    audio.currentTime = newCurrentTime.target.value / 100 * audio.duration;
+elements.seekerBar.addEventListener('input', (newCurrentTime) => {
+    elements.audio.currentTime = newCurrentTime.target.value / 100 * elements.audio.duration;
 });
 
 //changes volume as we slide around it
-volumeSlider.addEventListener('input', (newVolume) => {
-    audio.volume = newVolume.target.value/100;
+elements.volumeSlider.addEventListener('input', (newVolume) => {
+    elements.audio.volume = newVolume.target.value/100;
+});
+
+// expands cover image on click
+elements.coverImage.addEventListener('click', () => {
+    elements.coverImage.classList.toggle('cover_image_smol');
+    elements.coverImage.classList.toggle('cover_image_big');
 });

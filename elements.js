@@ -1,0 +1,21 @@
+// the great list of elements
+export const audio = document.getElementById('audio');
+export const currentTimeCount = document.getElementById('current_time');
+export const totalTimeCount = document.getElementById('total_time');
+export const coverImage = document.getElementById('cover_image');
+export const currentSong = document.getElementById('song_name');
+export const currentArtist = document.getElementById('artist_name');
+export const openFolder = document.getElementById('open_folder');
+export const songList = document.getElementById('song_list');
+export const loopButton = document.getElementById('loop');
+export const openFileButton = document.getElementById('open_file');
+export const playButton = document.getElementById('play');
+export const pauseButton = document.getElementById('pause');
+export const stopButton = document.getElementById('stop');
+export const volumeUpButton = document.getElementById('volume_up');
+export const volumeDownButton = document.getElementById('volume_down');
+export const seekerBar = document.getElementById('seeker');
+export const previousButton = document.getElementById('previous');
+export const nextButton = document.getElementById('next');
+export const shuffleButton = document.getElementById('shuffle');
+export const volumeSlider = document.getElementById('volume_slider');

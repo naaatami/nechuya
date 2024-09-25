@@ -1,23 +1,4 @@
-//fix this eventually
-const audio = document.getElementById('audio');
-const currentTimeCount = document.getElementById('current_time');
-const totalTimeCount = document.getElementById('total_time');
-const coverImage = document.getElementById('cover_image');
-const currentSong = document.getElementById('song_name');
-const currentArtist = document.getElementById('artist_name');
-const openFolder = document.getElementById('open_folder');
-const songList = document.getElementById('song_list');
-const loopButton = document.getElementById('loop');
-const openFileButton = document.getElementById('open_file');
-const playButton = document.getElementById('play');
-const pauseButton = document.getElementById('pause');
-const stopButton = document.getElementById('stop');
-const volumeUpButton = document.getElementById('volume_up');
-const volumeDownButton = document.getElementById('volume_down');
-const seekerBar = document.getElementById('seeker');
-const previousButton = document.getElementById('previous');
-const nextButton = document.getElementById('next');
-const shuffleButton = document.getElementById('shuffle');
+import * as elements from './elements.js';
 
 let currentSongIndex = 0;
 let songFiles = [];
@@ -27,23 +8,23 @@ let shuffleIndexList = [];
 let folderPath;
 
 //change time shown by the seeker
-audio.addEventListener("timeupdate", () => {
+elements.audio.addEventListener("timeupdate", () => {
     //makes it so NaN does not show anymore
-    if(!audio.currentTime)
+    if(!elements.audio.currentTime)
     {
         return;
     }
 
-    const currentTime = audio.currentTime;
-    const duration = audio.duration;
+    const currentTime = elements.audio.currentTime;
+    const duration = elements.audio.duration;
 
     const currentMinutes = Math.floor(currentTime / 60);
     const currentSeconds = Math.floor(currentTime % 60);
     const totalMinutes = Math.floor(duration / 60);
     const totalSeconds = Math.floor(duration % 60);
 
-    currentTimeCount.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
-    totalTimeCount.textContent = `${totalMinutes}:${totalSeconds < 10 ? '0' : ''}${totalSeconds}`;
+    elements.currentTimeCount.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
+    elements.totalTimeCount.textContent = `${totalMinutes}:${totalSeconds < 10 ? '0' : ''}${totalSeconds}`;
 });
 
 
@@ -56,16 +37,16 @@ function updateCurrentPlayingInfo(filePath) {
             var title = tag.tags.title;
 
             if (title) {
-                currentSong.textContent = title;
+                elements.currentSong.textContent = title;
             } else {
                 var fileName = filePath.replace(/^.*[\\/]/, '')
-                currentSong.textContent = fileName;
+                elements.currentSong.textContent = fileName;
             }
 
             if(artist) {
-                currentArtist.textContent = artist;
+                elements.currentArtist.textContent = artist;
             } else {
-                currentArtist.textContent = "No given artist";
+                elements.currentArtist.textContent = "No given artist";
             }
 
             if (image) {
@@ -75,30 +56,30 @@ function updateCurrentPlayingInfo(filePath) {
                 }
                 var base64 = "data:" + image.format + ";base64," +
                 window.btoa(base64String);
-                coverImage.setAttribute('src',base64);
-                coverImage.style.display = 'inline';
+                elements.coverImage.setAttribute('src',base64);
+                elements.coverImage.style.display = 'inline';
             } else {
-                coverImage.src="resources/noCover.jpg"
+                elements.coverImage.src="resources/noCover.jpg"
             }
         },
         onError: function(error) {
             //even though we have the above, this is still needed... :C
             var fileName = filePath.replace(/^.*[\\/]/, '')
-            currentSong.textContent = fileName;
-            currentArtist.textContent = "No given artist";
-            coverImage.src="resources/noCover.jpg"
+            elements.currentSong.textContent = fileName;
+            elements.currentArtist.textContent = "No given artist";
+            elements.coverImage.src="resources/noCover.jpg"
         }
     });
 }
 
 // go to next song on audio end
-audio.addEventListener('ended', () => {
+elements.audio.addEventListener('ended', () => {
     playNextSong();
     seekerBar.value = 0;
 });
 
 // open folder
-openFolder.addEventListener('click', async () => {
+elements.openFolder.addEventListener('click', async () => {
     folderPath = await window.electronAPI.openFolder();
     loadFiles(folderPath);
 });
@@ -143,12 +124,14 @@ function getArtistName(file) {
 
 
 // play button - plays first song if nothing is playing yet
-playButton.addEventListener('click', () => {
-    if(!audio.src)
+elements.playButton.addEventListener('click', () => {
+    if(!elements.audio.src)
     {
         loadAndPlaySong();
     }
-    audio.play();
+    elements.audio.play();
+    elements.playButton.style.display = 'none';
+    elements.pauseButton.style.display = 'inline';
 });
 
 // loads and plays the song at the given index.
@@ -156,10 +139,10 @@ playButton.addEventListener('click', () => {
 function loadAndPlaySong(index=0){
     currentSongIndex = index;
     const fullPath = `${folderPath}/${songFiles[currentSongIndex]}`;
-    audio.src = fullPath;
-    audio.play();
-    playButton.style.display = 'none';
-    pauseButton.style.display = 'inline';
+    elements.audio.src = fullPath;
+    elements.audio.play();
+    elements.playButton.style.display = 'none';
+    elements.pauseButton.style.display = 'inline';
     updateCurrentPlayingInfo(fullPath);
 }
 
@@ -174,7 +157,9 @@ function manualSongClick(index=0){
 async function loadFiles(folderPath) {
     songFiles = await window.electronAPI.readDirectory(folderPath);
     console.log(songFiles);
-    songList.innerHTML = ''; //clears list for this being opened again
+
+    // clears the list - commented out right now to keep all folders open
+    // songList.innerHTML = '';
 
     for (const [index, song] of songFiles.entries()) {
         const fullPath = `${folderPath}/${song}`;
@@ -187,7 +172,6 @@ async function loadFiles(folderPath) {
         songInfoBox.append(forceToLeft);
 
         songInfoBox.addEventListener('click', () => manualSongClick(index));
-
 
         const songDurationBox = document.createElement('span');
         const songDuration = await window.audioAPI.getAudioDuration(fullPath);
@@ -206,12 +190,12 @@ async function loadFiles(folderPath) {
         songArtist.textContent = await getArtistName(fullPath);
         songInfoBox.append(songArtist);
 
-        songList.append(songInfoBox);
+        elements.songList.append(songInfoBox);
     }
 };
 
 // next button - turns loop off
-nextButton.addEventListener('click', () => {
+elements.nextButton.addEventListener('click', () => {
     toggleLoop(false);
     playNextSong();
 });
@@ -241,7 +225,7 @@ function playNextSong(){
 }
 
 // plays previous song
-previousButton.addEventListener('click', () => {
+elements.previousButton.addEventListener('click', () => {
     let previousSongIndex;
     if(shuffleMode == true)
     {
@@ -257,7 +241,7 @@ previousButton.addEventListener('click', () => {
 
 
 // button to toggle shuffling
-shuffleButton.addEventListener('click', () => {
+elements.shuffleButton.addEventListener('click', () => {
     toggleShuffle();
 });
 
@@ -272,7 +256,7 @@ function toggleShuffle(toggleAsNormal=true) {
     }
 
     if(shuffleMode) {
-        shuffleButton.textContent = 'Unshuffle';
+        elements.shuffleButton.textContent = 'Unshuffle';
         shuffleIndexList = [];
 
         for(let index = 0; index < songFiles.length; index++)
@@ -287,11 +271,12 @@ function toggleShuffle(toggleAsNormal=true) {
             [shuffleIndexList[currentIndex], shuffleIndexList[randomIndex]] = [shuffleIndexList[randomIndex], shuffleIndexList[currentIndex]];
         }
     } else {
-        shuffleButton.textContent = 'Shuffle';
+        elements.shuffleButton.textContent = 'Shuffle';
     }
 }
 
 // toggles looping
+// you can pass false to disable for sure - no toggling
 function toggleLoop(toggleAsNormal=true){
     if(toggleAsNormal)
     {
@@ -301,24 +286,21 @@ function toggleLoop(toggleAsNormal=true){
     }
 
     if(loopMode) {
-        loopButton.textContent = 'Unloop';
+        elements.loopButton.textContent = 'Unloop';
     } else {
-        loopButton.textContent = 'Loop';
+        elements.loopButton.textContent = 'Loop';
     }
 }
 
 // button to toggle looping
-loopButton.addEventListener('click', () => {
+elements.loopButton.addEventListener('click', () => {
     toggleLoop();
 });
 
-// expands cover image on click
-coverImage.addEventListener('click', () => {
-    coverImage.classList.toggle('cover_image_smol');
-    coverImage.classList.toggle('cover_image_big');
-});
 
-//folderPath = "/home/nat/Music";
-//loadFiles(folderPath);
+// my default folder
+// this will not be hardcoded forever
+folderPath = "/home/nat/pleasework/music/soundcloudthievery";
+loadFiles(folderPath);
 
 
