@@ -1,3 +1,4 @@
+//please fix this eventually
 const audio = document.getElementById('audio');
 const currentTimeCount = document.getElementById('current_time');
 const totalTimeCount = document.getElementById('total_time');
@@ -318,10 +319,7 @@ coverImage.addEventListener('click', () => {
 });
 
 
-
-//runs on start, remove eventually
-// folderPath = CONFIG.defaultFolder;
-folderPath = "/home/nat/pleasework/music/soundcloudthievery";
+folderPath = "~/Music";
 loadFiles(folderPath);
 
 
