@@ -18,7 +18,7 @@ If you'd like to see the cover art a bit better, you can click it on the bottom 
 ### How to use it
 Download and open a command prompt in the project directory. Run `npm install` and then `npm start`.
 
-On launch, it will open to a default folder (~/Music). You can click "open folder" on the top and open up a different music folder if you'd like.
+On launch, you'll just need to click "Open folder" at the top to select your music folder. 
 
 ### What's with the name?
 It's a butchered, romanized version of "can't hear" in Bulgarian.
