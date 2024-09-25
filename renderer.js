@@ -1,4 +1,4 @@
-//please fix this eventually
+//fix this eventually
 const audio = document.getElementById('audio');
 const currentTimeCount = document.getElementById('current_time');
 const totalTimeCount = document.getElementById('total_time');
@@ -318,8 +318,7 @@ coverImage.addEventListener('click', () => {
     coverImage.classList.toggle('cover_image_big');
 });
 
-
-folderPath = "~/Music";
-loadFiles(folderPath);
+//folderPath = "/home/nat/Music";
+//loadFiles(folderPath);
 
 
